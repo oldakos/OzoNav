@@ -244,13 +244,16 @@ public class Ozobot {
             tt2.play();
         });
         TimerTask animation1 = new GUITimerTask(() -> {
-            circle.setVisible(false);
-            line.setVisible(true);
             timer.schedule(animation2, (long) (duration - duration2));
             tt1.play();
         });
-        timer.schedule(animation1, Const.signalDuration);
-        circle.setFill(new Color(0,1,0,1));
+        TimerTask showLineAndWait = new GUITimerTask(() -> {
+            circle.setVisible(false);
+            line.setVisible(true);
+            timer.schedule(animation1, 200);
+        });
+        timer.schedule(showLineAndWait, Const.signalDuration);
+        circle.setFill(new Color(0,0,1,1));
         circle.setVisible(true);
     }
 

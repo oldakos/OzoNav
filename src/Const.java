@@ -9,7 +9,7 @@ public class Const {
     /**
      * Width of lines that bots follow, in millimeters
      */
-    public static final double ozoLineWidth = 5;
+    public static final double ozoLineWidth = 4.5;
     /**
      * Paint to be used for the placement indicator for robots
      */
