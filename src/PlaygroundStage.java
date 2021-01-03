@@ -27,7 +27,10 @@ public class PlaygroundStage extends Stage {
     private final double pxLineWidth;
     private final Timer timer;
 
-    public PlaygroundStage(PlaygroundConfig cfg) {
+    public PlaygroundStage(PlaygroundConfig cfg, Stage screenIndicator) {
+        this.setX(screenIndicator.getX());
+        this.setY(screenIndicator.getY());
+        this.setFullScreen(true);
         config = new PlaygroundConfig(cfg); //using the copy ctor
         averagePixelsPerMillimeter = ((config.pxHeight / config.mmHeight) + (config.pxWidth / config.mmWidth)) / 2;
         agents = new ArrayList<Ozobot>();
@@ -63,7 +66,6 @@ public class PlaygroundStage extends Stage {
         });
         setScene(scene);
         setFullScreenExitHint("");
-        //setFullScreen(true);
     }
 
     public double lengthToPx(double mm) {

@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -30,6 +31,9 @@ public class Main extends Application {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
 
+        Text txtDragMe = new Text("Drag me to the playground screen!\n\n");
+        vbox.getChildren().add(txtDragMe);
+
         Button btnStartPlayground = new Button("Start the playground");
         btnStartPlayground.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -45,11 +49,16 @@ public class Main extends Application {
     }
 
     private void launchPlayground() {
+
+        mainMenu.hide();
+        mainMenu.setFullScreen(true);
+
         PlaygroundConfig cfg = new PlaygroundConfig(props);
-        PlaygroundStage stage = new PlaygroundStage(cfg);
+        PlaygroundStage stage = new PlaygroundStage(cfg, mainMenu);
         stage.initModality(Modality.WINDOW_MODAL);
 
         stage.show();
+
         PlanParserThread parser = new PlanParserThread(stage);
         parser.start();
     }
