@@ -20,19 +20,22 @@ public class Ozobot {
     /**
      * Used for signalling to the robot.
      */
-    private Circle circle;
+    private final Circle circle;
+
     /**
      * Used to guide the robot's movement.
      */
-    private Rectangle line;
+    private final Rectangle line;
+
     /**
      * Used to mark the end of a movement line.
      */
-    private Rectangle endLine;
+    private final Rectangle endLine;
 
     public double getX() {
         return x;
     }
+
     /**
      * The x coord in pixels where the robot was last stationary.
      */
@@ -45,14 +48,15 @@ public class Ozobot {
      * The y coord in pixels where the robot was last stationary.
      */
     private double y;
+
     /**
      * The angle the robot is facing. 0 is straight towards increasing x, 90 is straight towards increasing y.
      */
     private double angle;
 
-    private Timer timer;
+    private final Timer timer;
 
-    private RobotConfigPx cfg;
+    private final RobotConfigPx cfg;
 
     /**
      * Construct a new instance of a robot in "pixel space".
@@ -101,11 +105,11 @@ public class Ozobot {
         line.getTransforms().add(r);
     }
 
-    private void moveRelative(double dx, double dy){
-        moveAbsolute(x + dx, y + dy);
+    private void updatePositionRelative(double dx, double dy) {
+        updatePositionAbsolute(x + dx, y + dy);
     }
 
-    private void moveAbsolute(double x, double y){
+    private void updatePositionAbsolute(double x, double y) {
 
         circle.setCenterX(x);
         circle.setCenterY(y);
@@ -142,6 +146,7 @@ public class Ozobot {
 
     public void hideCircle(){
         circle.setVisible(false);
+        circle.setStroke(new Color(0.2, 0.2, 0.2, 1));
     }
 
     /**
@@ -179,7 +184,7 @@ public class Ozobot {
         circle.setVisible(true);
         timer.schedule(rotateSignal2, Const.signalDuration);
 
-        setRotate(deltaAngle);
+        setRotate(this.angle + deltaAngle);
     }
 
     public void signalRotationAbsolute(double targetAngle){
@@ -197,7 +202,7 @@ public class Ozobot {
         TimerTask followLine = new GUITimerTask(() -> {
             signalFollowLine(Util.calculateDistance(this, x, y));
         });
-        timer.schedule(followLine, 2 * Const.signalDuration + Const.rotationDuration);
+        timer.schedule(followLine, 2 * Const.signalDuration + cfg.getRotationTime());
     }
 
     public void signalFollowLine(double distance){
@@ -231,7 +236,7 @@ public class Ozobot {
 
         TimerTask endAnimations = new GUITimerTask(() -> {
             hideLine();
-            moveAbsolute(targetX, targetY);
+            updatePositionAbsolute(targetX, targetY);
         });
         TimerTask animation2 = new GUITimerTask(() -> {
             showEndLine(targetX, targetY);

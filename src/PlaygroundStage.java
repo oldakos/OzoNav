@@ -1,24 +1,17 @@
-import javafx.animation.Interpolator;
-import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static java.lang.Math.*;
 
 public class PlaygroundStage extends Stage {
 
@@ -26,13 +19,13 @@ public class PlaygroundStage extends Stage {
      * Calculated as an average of these ratios in width and height of the monitor given in config - the user probably made some measurement errors.
      * Assumes that the monitor has square pixels.
      */
-    private double averagePixelsPerMillimeter;
-    private PlaygroundConfig config;
-    private ArrayList<Ozobot> agents;
-    private Pane root;
-    private double pxOzobotRadius;
-    private double pxLineWidth;
-    private Timer timer;
+    private final double averagePixelsPerMillimeter;
+    private final PlaygroundConfig config;
+    private final ArrayList<Ozobot> agents;
+    private final Pane root;
+    private final double pxOzobotRadius;
+    private final double pxLineWidth;
+    private final Timer timer;
 
     public PlaygroundStage(PlaygroundConfig cfg) {
         config = new PlaygroundConfig(cfg); //using the copy ctor
@@ -56,6 +49,7 @@ public class PlaygroundStage extends Stage {
                     ke.consume();
                     close();
                 }
+                //TODO: remove these hotkeys before any kind of "full release"
                 if (ke.getCode() == KeyCode.R) {
                     rotateAndMoveBotMilli(0, 300, 150);
                 }
@@ -102,18 +96,16 @@ public class PlaygroundStage extends Stage {
      */
     public void createBotPx(int id, double pxX, double pxY, double angle) {
 
-        RobotConfigPx cfg = new RobotConfigPx(lengthToPx(Const.ozoRadius), lengthToPx(Const.ozoLineWidth), lengthToPx(Const.ozoMoveSpeed));
+        RobotConfigPx cfg = new RobotConfigPx(lengthToPx(Const.ozoRadius), lengthToPx(Const.ozoLineWidth), lengthToPx(config.ozoSpeed), config.ozoRotationTime);
 
         Ozobot bot = new Ozobot(pxX, pxY, cfg, angle, root, timer);
         agents.add(bot);
 
         //though we could draw the arrow within Ozobot ctor, here we can use millimeter measurements easily and the Ozobot never needs an arrow again
         Polygon arrow = new Polygon();
-        arrow.getPoints().addAll(new Double[]{
-                pxX + pxOzobotRadius, pxY + lengthToPx(2),
+        arrow.getPoints().addAll(pxX + pxOzobotRadius, pxY + lengthToPx(2),
                 pxX + pxOzobotRadius, pxY - lengthToPx(2),
-                pxX + pxOzobotRadius + lengthToPx(8), pxY
-        });
+                pxX + pxOzobotRadius + lengthToPx(8), pxY);
         arrow.setFill(Const.startPaint);
         Rotate r = new Rotate();
         r.setAngle(angle);
@@ -125,7 +117,7 @@ public class PlaygroundStage extends Stage {
             arrow.setVisible(false);
             bot.hideCircle();
         });
-        timer.schedule(hideCircle, Const.placementWindow);
+        timer.schedule(hideCircle, config.placementTime);
         root.getChildren().add(arrow);
     }
 
